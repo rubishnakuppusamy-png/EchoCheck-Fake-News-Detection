@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Detection Workspace – EchoCheck AI</title>
+  <meta name="description" content="EchoCheck is an academic machine learning web platform that analyzes news articles with TF-IDF vectorization and calibrated classifiers to detect fake vs. real news.">
+  
+  <!-- Modern Typography (Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="static/css/style.css">
+
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="index.html" class="brand-logo" id="navLogo">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <span>Echo<span class="brand-accent">Check</span></span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav>
+          <ul class="nav-links" id="navLinks">
+            <li>
+              <a href="index.html" class="nav-link " id="navHome">Home</a>
+            </li>
+            <li>
+              <a href="detect.html" class="nav-link active" id="navDetect">Detect News</a>
+            </li>
+            <li>
+              <a href="how-it-works.html" class="nav-link " id="navHowItWorks">How It Works</a>
+            </li>
+            <li>
+              <a href="about.html" class="nav-link " id="navAbout">About</a>
+            </li>
+            <li>
+              <a href="history.html" class="nav-link " id="navHistory">History</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Right Side CTA and Mobile Menu Toggle -->
+        <div class="nav-actions">
+          <a href="detect.html" class="btn-nav-cta" id="navHeaderCTA">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Analyze News</span>
+          </a>
+
+          <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dynamic Page Content -->
+  <main>
+    
+<section class="section">
+  <div class="container">
+    <div class="workspace-wrapper">
+      
+      <!-- Workspace Page Title -->
+      <div class="section-header" style="margin-bottom: 2rem;">
+        <span class="section-badge">AI Text Inspection</span>
+        <h1 class="section-title">News Verification Workspace</h1>
+        <p class="section-desc">
+          Paste any complete news article, editorial, or breaking headline below to generate an instant veracity assessment with calibrated confidence metrics.
+        </p>
+      </div>
+
+      <!-- Quick-Load Sample Pills -->
+      <div class="sample-pills-bar">
+        <div class="sample-pills-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <span>Try a curated sample:</span>
+        </div>
+        <div class="sample-buttons-row">
+          
+            <button 
+              type="button" 
+              class="btn-sample "
+              data-sample-text="Environment ministers from over forty nations concluded a high-level summit in Geneva on Tuesday, reaching a unanimous agreement to accelerate clean energy investments and establish multilateral frameworks for cross-border carbon accounting. The final communiqué outlines specific funding mechanisms intended to assist developing economies in transitioning toward renewable power grids over the next two decades. Representatives from participating delegations noted that while targets remain demanding, the consensus reflects a shared commitment to international environmental governance and sustainable industrial development based on peer-reviewed meteorological data."
+              id="btnSample_real-1"
+            >
+              
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              
+              <span>International Climate Accord (Real Sample)</span>
+            </button>
+          
+            <button 
+              type="button" 
+              class="btn-sample "
+              data-sample-text="The Federal Reserve announced an update to its benchmark lending rate following a two-day policy meeting in Washington. Committee members voted to keep borrowing costs steady, citing balanced employment figures and a gradual moderation in core consumer price index data. During the post-meeting press conference, officials emphasized that future adjustments will depend on forthcoming economic indicators, particularly productivity figures and labor market resilience. Financial markets responded with modest gains as analysts observed greater stability across sovereign bond yields."
+              id="btnSample_real-2"
+            >
+              
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              
+              <span>Central Bank Interest Rate Decision (Real Sample)</span>
+            </button>
+          
+            <button 
+              type="button" 
+              class="btn-sample btn-sample-fake"
+              data-sample-text="SHOCKING TRUTH REVEALED: Whistleblowers have just leaked classified satellite files proving that world leaders have maintained an underground extraterrestrial research colony on the dark side of the moon since 1982! Mainstream media conglomerates have been ordered to completely black out this explosive story to conceal alien antigravity propulsion technology from the tax-paying public. Anonymous insiders claim ancient artifacts were secretly transported to military bunkers last midnight! Wake up people before they wipe this undeniable proof off the internet forever!"
+              id="btnSample_fake-1"
+            >
+              
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+              
+              <span>Secret Lunar Base Exposed (Fake Sample)</span>
+            </button>
+          
+            <button 
+              type="button" 
+              class="btn-sample btn-sample-fake"
+              data-sample-text="BOMBSHELL DISCOVERY: Big pharma executives are panicking after independent herbalists discovered a rare purple cabbage root that instantly eliminates all human illnesses in 48 hours! Corrupt hospitals have spent billions trying to ban this 100% natural backyard miracle cure. Doctors who tried to publish the secret recipe had their licenses revoked by shady deep-state regulators. Drink this mystical juice twice before bedtime and throw away all prescribed medicines immediately!"
+              id="btnSample_fake-2"
+            >
+              
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+              
+              <span>Miracle Vegetable Cures All Ailments (Fake Sample)</span>
+            </button>
+          
+        </div>
+      </div>
+
+      <!-- Main Input Card -->
+      <div class="analysis-card" id="detectionInputCard">
+        <!-- Client-Side Validation Alert -->
+        <div class="validation-alert" id="validationAlert">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span id="alertMessage">Please provide a valid news article.</span>
+        </div>
+
+        <form id="newsDetectionForm" onsubmit="return false;">
+          <div class="input-area-container">
+            <textarea 
+              id="newsArticleInput" 
+              class="news-textarea" 
+              placeholder="Paste the full text of the news article here (minimum 5 words)... e.g. An international treaty was signed today between European leaders regarding renewable energy investments..."
+              rows="9"
+              aria-label="News Article Text"
+              required
+            ></textarea>
+          </div>
+
+          <div class="textarea-footer">
+            <div class="counters-group">
+              <span id="wordCount">0 words</span>
+              <span>&bull;</span>
+              <span id="charCount">0 characters</span>
+            </div>
+            <div>
+              <span>Maximum: 40,000 characters</span>
+            </div>
+          </div>
+
+          <div class="action-buttons-group">
+            <button type="button" class="btn btn-clear" id="clearTextBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+              <span>Clear</span>
+            </button>
+
+            <button type="submit" class="btn btn-primary" id="analyzeNewsBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <span>Analyze News</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Loading State Animation Box -->
+      <div class="loading-box" id="loadingBox">
+        <div class="loading-spinner"></div>
+        <h3 class="loading-title">Evaluating Article with EchoCheck AI...</h3>
+        <p class="loading-status-text" id="loadingStatusText">
+          Extracting TF-IDF n-grams and executing classifier...
+        </p>
+      </div>
+
+      <!-- Result Card (Shown after prediction) -->
+      <div class="results-card" id="resultsCard">
+        <!-- Card Header -->
+        <div class="results-header-row">
+          <div id="resultBadge" class="result-badge result-badge-real">
+            <!-- Dynamically populated -->
+            REAL NEWS
+          </div>
+          <div class="results-timestamp" id="resultsTimestamp">
+            Analysis complete &bull; Persisted to database
+          </div>
+        </div>
+
+        <!-- Main Score & Progress Grid -->
+        <div class="results-main-grid">
+          <!-- Circular Progress Indicator -->
+          <div class="circle-progress-wrapper">
+            <svg class="circle-progress-svg" viewBox="0 0 160 160">
+              <circle class="circle-progress-bg" cx="80" cy="80" r="70"></circle>
+              <circle class="circle-progress-bar stroke-real" id="circleProgressBar" cx="80" cy="80" r="70"></circle>
+            </svg>
+            <div class="circle-inner-content">
+              <div class="circle-percent-val" id="circlePercentVal">--%</div>
+              <div class="circle-percent-label">Model Confidence</div>
+            </div>
+          </div>
+
+          <!-- Statement & Dual Probabilities -->
+          <div class="results-statement-block">
+            <h2 class="results-statement-heading" id="resultsStatementHeading">
+              This article is predicted to be REAL.
+            </h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+              Based on unigram and bigram TF-IDF feature distributions evaluated by our calibrated model.
+            </p>
+
+            <!-- Dual Probability Comparison Bar -->
+            <div class="dual-prob-bar-container">
+              <div class="dual-prob-labels">
+                <span class="prob-real-label">Real Probability: <strong id="probValReal">--%</strong></span>
+                <span class="prob-fake-label">Fake Probability: <strong id="probValFake">--%</strong></span>
+              </div>
+              <div class="dual-prob-track">
+                <div class="dual-prob-fill-real" id="probFillReal" style="width: 50%;"></div>
+                <div class="dual-prob-fill-fake" id="probFillFake" style="width: 50%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Explanation Box -->
+        <div class="explanation-card">
+          <div class="explanation-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <span>Model Explanation & Linguistic Diagnostic</span>
+          </div>
+          <p class="explanation-body" id="explanationText">
+            Article characteristics will appear here.
+          </p>
+        </div>
+
+        <!-- Linguistic Signals Chips -->
+        <div class="signals-chips-grid">
+          <div class="signal-chip">
+            <div class="signal-chip-val" id="signalWords">0</div>
+            <div class="signal-chip-label">Total Words</div>
+          </div>
+          <div class="signal-chip">
+            <div class="signal-chip-val" id="signalUpper">0%</div>
+            <div class="signal-chip-label">Uppercase Ratio</div>
+          </div>
+          <div class="signal-chip">
+            <div class="signal-chip-val" id="signalExcl">0</div>
+            <div class="signal-chip-label">Exclamations</div>
+          </div>
+          <div class="signal-chip">
+            <div class="signal-chip-val" id="signalAvgLen">0 ch</div>
+            <div class="signal-chip-label">Avg Word Length</div>
+          </div>
+        </div>
+
+        <!-- Analyzed Article Snippet Box -->
+        <div class="analyzed-preview-box">
+          <div class="analyzed-preview-title">Analyzed Article Text:</div>
+          <div id="analyzedPreviewText">...</div>
+        </div>
+
+        <!-- Result Footer Actions -->
+        <div class="results-action-footer">
+          <div>
+            <a href="history.html" class="btn btn-secondary btn-sm" id="viewInHistoryLink">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 14 14"/>
+              </svg>
+              <span>View in History Table</span>
+            </a>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="copySummaryBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span>Copy Summary</span>
+            </button>
+
+            <button type="button" class="btn btn-primary btn-sm" id="analyzeAnotherBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+              </svg>
+              <span>Analyze Another Article</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer" id="siteFooter">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-brand">
+          <div class="brand-logo">
+            <div class="brand-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <span>Echo<span class="brand-accent">Check</span></span>
+          </div>
+          <p class="footer-brand-desc">
+            An academic machine learning platform engineering transparency in news consumption through natural language processing, TF-IDF feature extraction, and calibrated probability modeling.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html" class="footer-link">Home</a></li>
+            <li><a href="detect.html" class="footer-link">Detect News</a></li>
+            <li><a href="how-it-works.html" class="footer-link">How It Works</a></li>
+            <li><a href="about.html" class="footer-link">Project Scope</a></li>
+            <li><a href="history.html" class="footer-link">Prediction History</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">ML Architecture</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">TF-IDF Vectorizer</span></li>
+            <li><span class="footer-link">Linear SVM (Calibrated)</span></li>
+            <li><span class="footer-link">Logistic Regression</span></li>
+            <li><span class="footer-link">Kaggle ISOT Dataset</span></li>
+            <li><span class="footer-link">SQLite3 Persistence</span></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Academic Mini Project</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">Domain: Artificial Intelligence & NLP</span></li>
+            <li><span class="footer-link">Model Accuracy: 99.21%</span></li>
+            <li><span class="footer-link">Calibrated Probabilities: Yes</span></li>
+            <li><span class="footer-link">Academic Year: 2025–2026</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>
+          &copy; 2026 <strong>EchoCheck</strong>. Academic College Mini Project.
+        </div>
+        <div class="footer-academic-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+          <span>Natural Language Processing & ML System</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript -->
+  <script src="static/js/main.js"></script>
+</body>
+</html>

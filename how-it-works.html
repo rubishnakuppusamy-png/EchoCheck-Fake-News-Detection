@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How It Works – EchoCheck AI Architecture</title>
+  <meta name="description" content="EchoCheck is an academic machine learning web platform that analyzes news articles with TF-IDF vectorization and calibrated classifiers to detect fake vs. real news.">
+  
+  <!-- Modern Typography (Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="static/css/style.css">
+
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="index.html" class="brand-logo" id="navLogo">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <span>Echo<span class="brand-accent">Check</span></span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav>
+          <ul class="nav-links" id="navLinks">
+            <li>
+              <a href="index.html" class="nav-link " id="navHome">Home</a>
+            </li>
+            <li>
+              <a href="detect.html" class="nav-link " id="navDetect">Detect News</a>
+            </li>
+            <li>
+              <a href="how-it-works.html" class="nav-link active" id="navHowItWorks">How It Works</a>
+            </li>
+            <li>
+              <a href="about.html" class="nav-link " id="navAbout">About</a>
+            </li>
+            <li>
+              <a href="history.html" class="nav-link " id="navHistory">History</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Right Side CTA and Mobile Menu Toggle -->
+        <div class="nav-actions">
+          <a href="detect.html" class="btn-nav-cta" id="navHeaderCTA">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Analyze News</span>
+          </a>
+
+          <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dynamic Page Content -->
+  <main>
+    
+<section class="section">
+  <div class="container">
+    
+    <!-- Page Header -->
+    <div class="section-header">
+      <span class="section-badge">Methodology &amp; NLP Pipeline</span>
+      <h1 class="section-title">The EchoCheck Machine Learning Architecture</h1>
+      <p class="section-desc">
+        A step-by-step mathematical and algorithmic walkthrough explaining how incoming articles are parsed, vectorized, classified, and calibrated for probabilistic transparency.
+      </p>
+    </div>
+
+    <!-- Visual Workflow Diagram (High Impact Visual SVG) -->
+    <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 2.5rem 1.5rem; margin-bottom: 3.5rem; box-shadow: var(--shadow-md); text-align: center;">
+      <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.5rem;">
+        End-to-End Inference Pipeline
+      </h3>
+      
+      <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+        <!-- Stage 1 -->
+        <div style="background: var(--lavender-50); border: 1.5px solid var(--lavender-300); border-radius: var(--radius-md); padding: 1.25rem 1rem; width: 170px; text-align: center;">
+          <div style="width: 36px; height: 36px; margin: 0 auto 0.6rem; border-radius: 50%; background: var(--lavender-600); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">1</div>
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Raw Article</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">User Text Submission</div>
+        </div>
+
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--lavender-400)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+
+        <!-- Stage 2 -->
+        <div style="background: var(--pink-50); border: 1.5px solid var(--pink-300); border-radius: var(--radius-md); padding: 1.25rem 1rem; width: 170px; text-align: center;">
+          <div style="width: 36px; height: 36px; margin: 0 auto 0.6rem; border-radius: 50%; background: var(--pink-500); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">2</div>
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Preprocessing</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Clean &amp; Dateline Strip</div>
+        </div>
+
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--lavender-400)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+
+        <!-- Stage 3 -->
+        <div style="background: var(--lavender-50); border: 1.5px solid var(--lavender-300); border-radius: var(--radius-md); padding: 1.25rem 1rem; width: 170px; text-align: center;">
+          <div style="width: 36px; height: 36px; margin: 0 auto 0.6rem; border-radius: 50%; background: var(--lavender-600); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">3</div>
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">TF-IDF N-Grams</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">15,000 Dimensions</div>
+        </div>
+
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--lavender-400)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+
+        <!-- Stage 4 -->
+        <div style="background: var(--pink-50); border: 1.5px solid var(--pink-300); border-radius: var(--radius-md); padding: 1.25rem 1rem; width: 170px; text-align: center;">
+          <div style="width: 36px; height: 36px; margin: 0 auto 0.6rem; border-radius: 50%; background: var(--pink-500); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">4</div>
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">ML Classifier</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Calibrated SVM / LR</div>
+        </div>
+
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--lavender-400)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+
+        <!-- Stage 5 -->
+        <div style="background: #ffffff; border: 2px solid var(--real-green); border-radius: var(--radius-md); padding: 1.25rem 1rem; width: 170px; text-align: center; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);">
+          <div style="width: 36px; height: 36px; margin: 0 auto 0.6rem; border-radius: 50%; background: var(--real-green); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;">5</div>
+          <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Confidence &amp; Audit</div>
+          <div style="font-size: 0.75rem; color: var(--real-green-dark); font-weight: 700; margin-top: 0.25rem;">REAL / FAKE Output</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed 5 Pipeline Stages Breakdown -->
+    <div style="display: flex; flex-direction: column; gap: 2rem; margin-bottom: 4rem;">
+      
+      <!-- Stage 1 -->
+      <div class="pipeline-step-item" style="padding: 2rem;">
+        <div class="step-number-badge">1</div>
+        <div>
+          <h3 class="step-content-title">Stage 1: News Article Input &amp; Ingestion</h3>
+          <p class="step-content-desc">
+            Users paste article text into our secure web interface. The frontend enforces strict validation (minimum 5 words to prevent arbitrary short-circuiting, maximum 40,000 characters to protect memory). The raw string is transmitted over a secure JSON POST request to the Flask <code>/predict</code> API endpoint.
+          </p>
+        </div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="pipeline-step-item" style="padding: 2rem;">
+        <div class="step-number-badge" style="background: var(--pink-500);">2</div>
+        <div>
+          <h3 class="step-content-title">Stage 2: Deterministic Text Preprocessing</h3>
+          <p class="step-content-desc">
+            Academic fake news detection faces a well-documented pitfall: models that memorize news agency tags (e.g. <em>"WASHINGTON (Reuters) -"</em>) achieve artificially high test scores without learning stylistic deception. Our <code>clean_text()</code> pipeline strips news agency datelines, removes URLs, filters HTML tags, removes special characters, and lowercases text so the model focuses purely on semantic veracity.
+          </p>
+          <span class="step-tag-pill">Dateline Stripping &bull; Lowercasing &bull; URL Removal &bull; Punctuation Filtering</span>
+        </div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="pipeline-step-item" style="padding: 2rem;">
+        <div class="step-number-badge">3</div>
+        <div>
+          <h3 class="step-content-title">Stage 3: TF-IDF Feature Extraction</h3>
+          <p class="step-content-desc">
+            The cleaned text is transformed using Term Frequency-Inverse Document Frequency (TF-IDF) with sublinear term-frequency scaling. We extract unigrams and bigrams across a vocabulary of 15,000 top features with <code>min_df=3</code> and <code>max_df=0.85</code>. Bigram extraction ensures that contextual phrases like <em>"breaking secret"</em> or <em>"anonymous source"</em> are given proper statistical weight.
+          </p>
+          <span class="step-tag-pill">15,000 Vocabulary &bull; Unigram (1) &amp; Bigram (2) &bull; Sublinear TF</span>
+        </div>
+      </div>
+
+      <!-- Stage 4 -->
+      <div class="pipeline-step-item" style="padding: 2rem;">
+        <div class="step-number-badge" style="background: var(--pink-500);">4</div>
+        <div>
+          <h3 class="step-content-title">Stage 4: Calibrated Machine Learning Classification</h3>
+          <p class="step-content-desc">
+            The high-dimensional feature vector is passed to our trained Support Vector Machine (LinearSVC) and Logistic Regression architectures. While standard SVM produces only uncalibrated hyperplane distances, we implement <strong>Platt scaling via CalibratedClassifierCV</strong> using 3-fold cross validation. This transforms geometric margins into mathematically sound, calibrated posterior probabilities.
+          </p>
+          <span class="step-tag-pill">LinearSVC &bull; Platt Scaling &bull; Logistic Regression Benchmark</span>
+        </div>
+      </div>
+
+      <!-- Stage 5 -->
+      <div class="pipeline-step-item" style="padding: 2rem;">
+        <div class="step-number-badge" style="background: var(--real-green);">5</div>
+        <div>
+          <h3 class="step-content-title">Stage 5: Prediction Confidence, Linguistic Diagnostics &amp; SQLite Audit</h3>
+          <p class="step-content-desc">
+            The final prediction returns the winning class (REAL or FAKE) with its calibrated confidence percentage. In parallel, our feature extraction engine scans for sensationalist linguistic markers (uppercase ratio, exclamation density, readability index) to construct an explainable diagnostic paragraph, and logs the prediction to SQLite.
+          </p>
+          <span class="step-tag-pill">Calibrated Probability &bull; Linguistic Signals &bull; SQLite Persistence</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Real Empirical Model Comparison Table -->
+    <div class="table-card" style="margin-bottom: 3.5rem;">
+      <div style="padding: 1.5rem 1.75rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">
+            Empirical Model Benchmark &amp; Comparison
+          </h3>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">
+            Evaluated on a 20% hold-out test set (4,793 unseen articles) from the Kaggle Disinformation Dataset.
+          </p>
+        </div>
+        <div>
+          <span style="font-size: 0.82rem; font-weight: 700; color: var(--lavender-700); background: var(--lavender-100); padding: 0.35rem 0.85rem; border-radius: var(--radius-full);">
+            Champion: Calibrated Support Vector Machine (LinearSVC)
+          </span>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Model Architecture</th>
+              <th>Test Accuracy</th>
+              <th>F1-Score</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>Training Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+              
+                <tr>
+                  <td><strong>Logistic Regression</strong></td>
+                  <td><span style="color: var(--real-green-dark); font-weight: 800;">98.87%</span></td>
+                  <td><strong>0.9888</strong></td>
+                  <td>0.9859</td>
+                  <td>0.9917</td>
+                  <td>0.21s</td>
+                  <td>
+                    
+                      <span class="table-badge" style="background: var(--lavender-100); color: var(--lavender-700);">Evaluated</span>
+                    
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td><strong>Support Vector Machine</strong></td>
+                  <td><span style="color: var(--real-green-dark); font-weight: 800;">99.21%</span></td>
+                  <td><strong>0.9921</strong></td>
+                  <td>0.9925</td>
+                  <td>0.9917</td>
+                  <td>0.48s</td>
+                  <td>
+                    
+                      <span class="table-badge table-badge-real">Selected (Best)</span>
+                    
+                  </td>
+                </tr>
+              
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div style="text-align: center; background: var(--gradient-soft); border-radius: var(--radius-xl); padding: 3rem 1.5rem; border: 1px solid var(--lavender-200);">
+      <h3 style="font-size: 1.75rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem;">
+        Ready to Test the Model in Action?
+      </h3>
+      <p style="font-size: 1rem; color: var(--text-secondary); max-width: 580px; margin: 0 auto 1.75rem;">
+        Paste any article or select one of our curated real/fake benchmark samples to watch the pipeline execute in real time.
+      </p>
+      <a href="detect.html" class="btn btn-primary" id="howItWorksCTA">
+        <span>Open Detection Workspace</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer" id="siteFooter">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-brand">
+          <div class="brand-logo">
+            <div class="brand-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <span>Echo<span class="brand-accent">Check</span></span>
+          </div>
+          <p class="footer-brand-desc">
+            An academic machine learning platform engineering transparency in news consumption through natural language processing, TF-IDF feature extraction, and calibrated probability modeling.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html" class="footer-link">Home</a></li>
+            <li><a href="detect.html" class="footer-link">Detect News</a></li>
+            <li><a href="how-it-works.html" class="footer-link">How It Works</a></li>
+            <li><a href="about.html" class="footer-link">Project Scope</a></li>
+            <li><a href="history.html" class="footer-link">Prediction History</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">ML Architecture</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">TF-IDF Vectorizer</span></li>
+            <li><span class="footer-link">Linear SVM (Calibrated)</span></li>
+            <li><span class="footer-link">Logistic Regression</span></li>
+            <li><span class="footer-link">Kaggle ISOT Dataset</span></li>
+            <li><span class="footer-link">SQLite3 Persistence</span></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Academic Mini Project</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">Domain: Artificial Intelligence & NLP</span></li>
+            <li><span class="footer-link">Model Accuracy: 99.21%</span></li>
+            <li><span class="footer-link">Calibrated Probabilities: Yes</span></li>
+            <li><span class="footer-link">Academic Year: 2025–2026</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>
+          &copy; 2026 <strong>EchoCheck</strong>. Academic College Mini Project.
+        </div>
+        <div class="footer-academic-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+          <span>Natural Language Processing & ML System</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript -->
+  <script src="static/js/main.js"></script>
+</body>
+</html>

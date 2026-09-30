@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediction History – EchoCheck AI</title>
+  <meta name="description" content="EchoCheck is an academic machine learning web platform that analyzes news articles with TF-IDF vectorization and calibrated classifiers to detect fake vs. real news.">
+  
+  <!-- Modern Typography (Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="static/css/style.css">
+
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="index.html" class="brand-logo" id="navLogo">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <span>Echo<span class="brand-accent">Check</span></span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav>
+          <ul class="nav-links" id="navLinks">
+            <li>
+              <a href="index.html" class="nav-link " id="navHome">Home</a>
+            </li>
+            <li>
+              <a href="detect.html" class="nav-link " id="navDetect">Detect News</a>
+            </li>
+            <li>
+              <a href="how-it-works.html" class="nav-link " id="navHowItWorks">How It Works</a>
+            </li>
+            <li>
+              <a href="about.html" class="nav-link " id="navAbout">About</a>
+            </li>
+            <li>
+              <a href="history.html" class="nav-link active" id="navHistory">History</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Right Side CTA and Mobile Menu Toggle -->
+        <div class="nav-actions">
+          <a href="detect.html" class="btn-nav-cta" id="navHeaderCTA">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Analyze News</span>
+          </a>
+
+          <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dynamic Page Content -->
+  <main>
+    
+<section class="section">
+  <div class="container">
+    
+    <!-- Page Header -->
+    <div class="section-header" style="margin-bottom: 2.25rem;">
+      <span class="section-badge">Persistent SQLite Audit Log</span>
+      <h1 class="section-title">Prediction History</h1>
+      <p class="section-desc">
+        Complete historical log of all analyzed articles, classifications, and calibrated probability scores stored locally in SQLite.
+      </p>
+    </div>
+
+    <!-- History Stats KPI Cards -->
+    <div class="history-stats-grid">
+      <div class="history-stat-card">
+        <div class="history-stat-info">
+          <span class="history-stat-val" id="statTotalVal">5</span>
+          <span class="history-stat-label">Total Analyzed</span>
+        </div>
+        <div class="history-stat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="history-stat-card">
+        <div class="history-stat-info">
+          <span class="history-stat-val" style="color: var(--real-green-dark);" id="statRealPctVal">40.0%</span>
+          <span class="history-stat-label">Real News (2)</span>
+        </div>
+        <div class="history-stat-icon" style="background: var(--real-green-bg); color: var(--real-green-dark);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="history-stat-card">
+        <div class="history-stat-info">
+          <span class="history-stat-val" style="color: var(--fake-red-dark);" id="statFakePctVal">60.0%</span>
+          <span class="history-stat-label">Fake News (3)</span>
+        </div>
+        <div class="history-stat-icon" style="background: var(--fake-red-bg); color: var(--fake-red-dark);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="history-stat-card">
+        <div class="history-stat-info">
+          <span class="history-stat-val" style="color: var(--lavender-700);" id="statAvgConfVal">78.9%</span>
+          <span class="history-stat-label">Avg. Confidence</span>
+        </div>
+        <div class="history-stat-icon" style="background: var(--lavender-100); color: var(--lavender-600);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Breakdown Section (if records exist) -->
+    
+    <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+      <div>
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">Corpus Veracity Distribution</h3>
+        <p style="font-size: 0.88rem; color: var(--text-secondary);">Relative proportion of Real vs. Fabricated stories analyzed in this session.</p>
+      </div>
+      <div style="width: 220px; height: 110px;">
+        <canvas 
+          id="historyDistributionChart" 
+          data-real-count="2" 
+          data-fake-count="3"
+        ></canvas>
+      </div>
+    </div>
+    
+
+    <!-- History Toolbar (Search, Filter, Clear) -->
+    <div class="history-toolbar">
+      <input 
+        type="text" 
+        id="historySearch" 
+        class="history-search-input" 
+        placeholder="Search history by keyword or label (e.g., climate, government, REAL)..." 
+        aria-label="Search History"
+      >
+
+      <div class="history-filters">
+        <button type="button" class="filter-btn active" data-filter="ALL" id="filterAllBtn">All (5)</button>
+        <button type="button" class="filter-btn" data-filter="REAL" id="filterRealBtn">Real Only</button>
+        <button type="button" class="filter-btn" data-filter="FAKE" id="filterFakeBtn">Fake Only</button>
+      </div>
+
+      <div>
+        
+        <button type="button" class="btn btn-danger btn-sm" id="clearHistoryBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          <span>Clear History</span>
+        </button>
+        
+      </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="data-table" id="historyDataTable">
+          <thead>
+            <tr>
+              <th style="width: 70px;">ID</th>
+              <th style="width: 170px;">Date &amp; Time</th>
+              <th>Article Snippet</th>
+              <th style="width: 130px;">Prediction</th>
+              <th style="width: 130px;">Confidence</th>
+              <th style="width: 100px; text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            
+              
+                <tr class="history-row" data-text="cm of tamilnadu is vijay" data-label="FAKE">
+                  <td style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">#5</td>
+                  <td style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
+                    2026-09-30 16:51:08
+                  </td>
+                  <td>
+                    <div class="table-snippet" title="cm of tamilnadu is vijay">
+                      cm of tamilnadu is vijay
+                    </div>
+                  </td>
+                  <td>
+                    
+                      <span class="table-badge table-badge-fake">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        FAKE
+                      </span>
+                    
+                  </td>
+                  <td>
+                    <strong style="color: var(--fake-red-dark);">
+                      79.56%
+                    </strong>
+                  </td>
+                  <td style="text-align: right;">
+                    <button 
+                      type="button" 
+                      class="btn btn-secondary btn-sm btn-view-article"
+                      data-full-text="cm of tamilnadu is vijay"
+                      title="View Complete Text"
+                    >
+                      <span>View</span>
+                    </button>
+                  </td>
+                </tr>
+              
+                <tr class="history-row" data-text="cm of tamilnadu is eps" data-label="FAKE">
+                  <td style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">#4</td>
+                  <td style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
+                    2026-09-30 16:50:48
+                  </td>
+                  <td>
+                    <div class="table-snippet" title="cm of tamilnadu is eps">
+                      cm of tamilnadu is eps
+                    </div>
+                  </td>
+                  <td>
+                    
+                      <span class="table-badge table-badge-fake">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        FAKE
+                      </span>
+                    
+                  </td>
+                  <td>
+                    <strong style="color: var(--fake-red-dark);">
+                      79.56%
+                    </strong>
+                  </td>
+                  <td style="text-align: right;">
+                    <button 
+                      type="button" 
+                      class="btn btn-secondary btn-sm btn-view-article"
+                      data-full-text="cm of tamilnadu is eps"
+                      title="View Complete Text"
+                    >
+                      <span>View</span>
+                    </button>
+                  </td>
+                </tr>
+              
+                <tr class="history-row" data-text="environment ministers from over forty nations concluded a high-level summit in geneva on tuesday, reaching a unanimous agreement to accelerate clean energy investments and establish multilateral frameworks for cross-border carbon accounting. the final communiqué outlines specific funding mechanisms intended to assist developing economies in transitioning toward renewable power grids over the next two decades. representatives from participating delegations noted that while targets remain demanding, the consensus reflects a shared commitment to international environmental governance and sustainable industrial development based on peer-reviewed meteorological data." data-label="REAL">
+                  <td style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">#3</td>
+                  <td style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
+                    2026-09-30 12:32:25
+                  </td>
+                  <td>
+                    <div class="table-snippet" title="Environment ministers from over forty nations concluded a high-level summit in Geneva on Tuesday, reaching a unanimous agreement to accelerate clean energy investments and establish multilateral frameworks for cross-border carbon accounting. The final communiqué outlines specific funding mechanisms intended to assist developing economies in transitioning toward renewable power grids over the next two decades. Representatives from participating delegations noted that while targets remain demanding, the consensus reflects a shared commitment to international environmental governance and sustainable industrial development based on peer-reviewed meteorological data.">
+                      Environment ministers from over forty nations concluded a high-level summit in Geneva on Tuesday, reaching a unanimous agreement to accelerate clean energy i...
+                    </div>
+                  </td>
+                  <td>
+                    
+                      <span class="table-badge table-badge-real">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        REAL
+                      </span>
+                    
+                  </td>
+                  <td>
+                    <strong style="color: var(--real-green-dark);">
+                      69.85%
+                    </strong>
+                  </td>
+                  <td style="text-align: right;">
+                    <button 
+                      type="button" 
+                      class="btn btn-secondary btn-sm btn-view-article"
+                      data-full-text="Environment ministers from over forty nations concluded a high-level summit in Geneva on Tuesday, reaching a unanimous agreement to accelerate clean energy investments and establish multilateral frameworks for cross-border carbon accounting. The final communiqué outlines specific funding mechanisms intended to assist developing economies in transitioning toward renewable power grids over the next two decades. Representatives from participating delegations noted that while targets remain demanding, the consensus reflects a shared commitment to international environmental governance and sustainable industrial development based on peer-reviewed meteorological data."
+                      title="View Complete Text"
+                    >
+                      <span>View</span>
+                    </button>
+                  </td>
+                </tr>
+              
+                <tr class="history-row" data-text="shocking truth revealed: whistleblowers have just leaked classified satellite files proving that world leaders have maintained an underground extraterrestrial research colony on the dark side of the moon! mainstream media has been ordered to black out this explosive story to conceal alien antigravity propulsion technology from the tax-paying public! share this before deleted!" data-label="FAKE">
+                  <td style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">#2</td>
+                  <td style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
+                    2026-09-30 12:27:15
+                  </td>
+                  <td>
+                    <div class="table-snippet" title="SHOCKING TRUTH REVEALED: Whistleblowers have just leaked classified satellite files proving that world leaders have maintained an underground extraterrestrial research colony on the dark side of the moon! Mainstream media has been ordered to black out this explosive story to conceal alien antigravity propulsion technology from the tax-paying public! Share this before deleted!">
+                      SHOCKING TRUTH REVEALED: Whistleblowers have just leaked classified satellite files proving that world leaders have maintained an underground extraterrestria...
+                    </div>
+                  </td>
+                  <td>
+                    
+                      <span class="table-badge table-badge-fake">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        FAKE
+                      </span>
+                    
+                  </td>
+                  <td>
+                    <strong style="color: var(--fake-red-dark);">
+                      99.97%
+                    </strong>
+                  </td>
+                  <td style="text-align: right;">
+                    <button 
+                      type="button" 
+                      class="btn btn-secondary btn-sm btn-view-article"
+                      data-full-text="SHOCKING TRUTH REVEALED: Whistleblowers have just leaked classified satellite files proving that world leaders have maintained an underground extraterrestrial research colony on the dark side of the moon! Mainstream media has been ordered to black out this explosive story to conceal alien antigravity propulsion technology from the tax-paying public! Share this before deleted!"
+                      title="View Complete Text"
+                    >
+                      <span>View</span>
+                    </button>
+                  </td>
+                </tr>
+              
+                <tr class="history-row" data-text="environment ministers from over forty nations concluded a high-level summit in geneva on tuesday, reaching a unanimous agreement to accelerate clean energy investments and establish multilateral frameworks for cross-border carbon accounting. the final communiqué outlines funding mechanisms to assist developing economies in transitioning toward renewable power." data-label="REAL">
+                  <td style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">#1</td>
+                  <td style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
+                    2026-09-30 12:27:15
+                  </td>
+                  <td>
+                    <div class="table-snippet" title="Environment ministers from over forty nations concluded a high-level summit in Geneva on Tuesday, reaching a unanimous agreement to accelerate clean energy investments and establish multilateral frameworks for cross-border carbon accounting. The final communiqué outlines funding mechanisms to assist developing economies in transitioning toward renewable power.">
+                      Environment ministers from over forty nations concluded a high-level summit in Geneva on Tuesday, reaching a unanimous agreement to accelerate clean energy i...
+                    </div>
+                  </td>
+                  <td>
+                    
+                      <span class="table-badge table-badge-real">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        REAL
+                      </span>
+                    
+                  </td>
+                  <td>
+                    <strong style="color: var(--real-green-dark);">
+                      65.73%
+                    </strong>
+                  </td>
+                  <td style="text-align: right;">
+                    <button 
+                      type="button" 
+                      class="btn btn-secondary btn-sm btn-view-article"
+                      data-full-text="Environment ministers from over forty nations concluded a high-level summit in Geneva on Tuesday, reaching a unanimous agreement to accelerate clean energy investments and establish multilateral frameworks for cross-border carbon accounting. The final communiqué outlines funding mechanisms to assist developing economies in transitioning toward renewable power."
+                      title="View Complete Text"
+                    >
+                      <span>View</span>
+                    </button>
+                  </td>
+                </tr>
+              
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Clear History Confirmation Modal -->
+<div class="modal-overlay" id="confirmClearModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title" style="color: var(--fake-red-dark);">Confirm Clearing History</h3>
+      <button type="button" class="modal-close-btn" id="cancelClearBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to permanently clear the prediction history from the SQLite database? This action cannot be undone.
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('confirmClearModal').classList.remove('active');">
+        Cancel
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" id="executeClearBtn">
+        Yes, Delete All History
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- View Full Article Modal -->
+<div class="modal-overlay" id="viewArticleModal">
+  <div class="modal-box" style="max-width: 720px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Full News Article Content</h3>
+      <button type="button" class="modal-close-btn" id="closeArticleModalBtn">&times;</button>
+    </div>
+    <div class="modal-body" id="fullArticleModalContent" style="white-space: pre-wrap; font-family: inherit; font-size: 0.92rem; line-height: 1.65; max-height: 440px;">
+      Loading text...
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('viewArticleModal').classList.remove('active');">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer" id="siteFooter">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-brand">
+          <div class="brand-logo">
+            <div class="brand-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <span>Echo<span class="brand-accent">Check</span></span>
+          </div>
+          <p class="footer-brand-desc">
+            An academic machine learning platform engineering transparency in news consumption through natural language processing, TF-IDF feature extraction, and calibrated probability modeling.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html" class="footer-link">Home</a></li>
+            <li><a href="detect.html" class="footer-link">Detect News</a></li>
+            <li><a href="how-it-works.html" class="footer-link">How It Works</a></li>
+            <li><a href="about.html" class="footer-link">Project Scope</a></li>
+            <li><a href="history.html" class="footer-link">Prediction History</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">ML Architecture</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">TF-IDF Vectorizer</span></li>
+            <li><span class="footer-link">Linear SVM (Calibrated)</span></li>
+            <li><span class="footer-link">Logistic Regression</span></li>
+            <li><span class="footer-link">Kaggle ISOT Dataset</span></li>
+            <li><span class="footer-link">SQLite3 Persistence</span></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Academic Mini Project</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">Domain: Artificial Intelligence & NLP</span></li>
+            <li><span class="footer-link">Model Accuracy: 99.21%</span></li>
+            <li><span class="footer-link">Calibrated Probabilities: Yes</span></li>
+            <li><span class="footer-link">Academic Year: 2025–2026</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>
+          &copy; 2026 <strong>EchoCheck</strong>. Academic College Mini Project.
+        </div>
+        <div class="footer-academic-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+          <span>Natural Language Processing & ML System</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript -->
+  <script src="static/js/main.js"></script>
+</body>
+</html>

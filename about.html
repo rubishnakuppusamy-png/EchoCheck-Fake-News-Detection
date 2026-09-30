@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About EchoCheck – Academic Mini Project</title>
+  <meta name="description" content="EchoCheck is an academic machine learning web platform that analyzes news articles with TF-IDF vectorization and calibrated classifiers to detect fake vs. real news.">
+  
+  <!-- Modern Typography (Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="static/css/style.css">
+
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="index.html" class="brand-logo" id="navLogo">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <span>Echo<span class="brand-accent">Check</span></span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav>
+          <ul class="nav-links" id="navLinks">
+            <li>
+              <a href="index.html" class="nav-link " id="navHome">Home</a>
+            </li>
+            <li>
+              <a href="detect.html" class="nav-link " id="navDetect">Detect News</a>
+            </li>
+            <li>
+              <a href="how-it-works.html" class="nav-link " id="navHowItWorks">How It Works</a>
+            </li>
+            <li>
+              <a href="about.html" class="nav-link active" id="navAbout">About</a>
+            </li>
+            <li>
+              <a href="history.html" class="nav-link " id="navHistory">History</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Right Side CTA and Mobile Menu Toggle -->
+        <div class="nav-actions">
+          <a href="detect.html" class="btn-nav-cta" id="navHeaderCTA">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Analyze News</span>
+          </a>
+
+          <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dynamic Page Content -->
+  <main>
+    
+<section class="section">
+  <div class="container">
+    
+    <!-- Page Header -->
+    <div class="section-header">
+      <span class="section-badge">Academic Project Overview</span>
+      <h1 class="section-title">About the EchoCheck Project</h1>
+      <p class="section-desc">
+        A college mini project investigating natural language processing methodologies for detecting fabricated content in digital journalism.
+      </p>
+    </div>
+
+    <!-- About Grid -->
+    <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: start; margin-bottom: 3.5rem;">
+      <div>
+        <h2 style="font-size: 1.65rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem;">
+          Problem Statement &amp; Motivation
+        </h2>
+        <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.25rem;">
+          The rapid proliferation of digital misinformation, algorithmic clickbait, and fabricated political narratives poses a severe challenge to democratic discourse, public health policies, and collective societal trust. With social networks amplifying sensationalism at scale, manual fact-checking organizations struggle to keep pace with the volume of generated content.
+        </p>
+        <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.5rem;">
+          <strong>EchoCheck</strong> was conceived as an academic engineering endeavor to explore how mathematical feature engineering (TF-IDF unigrams and bigrams) combined with calibrated support vector machines and logistic regression can serve as a rapid, lightweight first-line defense against automated and synthetic disinformation.
+        </p>
+
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.75rem;">
+          Dataset: Kaggle Fake and Real News Corpus
+        </h3>
+        <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.25rem;">
+          EchoCheck is trained on the benchmark Kaggle Fake and Real News dataset (ISOT Research Lab), comprising thousands of authenticated articles from credible wire reports alongside thousands of verified fabricated stories originating from debunked fake news websites.
+        </p>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem;">
+          <li style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.92rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--real-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <strong>24,000+ Articles</strong> balanced across authentic journalism and verified fabricated reports.
+          </li>
+          <li style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.92rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--real-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <strong>Dateline Stripping Preprocessing:</strong> Prevents model bias towards publisher signatures.
+          </li>
+          <li style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.92rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--real-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <strong>15,000 N-Gram Dimensions:</strong> Capturing syntactic word associations and rhetorical markers.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tech Stack Card -->
+      <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-md);">
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--lavender-600)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+          <span>Complete Technology Stack</span>
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <div style="border-left: 3px solid var(--lavender-500); padding-left: 1rem;">
+            <strong style="color: var(--text-primary); font-size: 0.95rem;">Frontend Layer</strong>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">HTML5, Vanilla CSS3, Reactive Vanilla JavaScript, Chart.js Data Visualizations</p>
+          </div>
+
+          <div style="border-left: 3px solid var(--pink-500); padding-left: 1rem;">
+            <strong style="color: var(--text-primary); font-size: 0.95rem;">Backend Application</strong>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Python 3.13, Flask 3.1 Web Framework, RESTful JSON API Architecture</p>
+          </div>
+
+          <div style="border-left: 3px solid var(--lavender-500); padding-left: 1rem;">
+            <strong style="color: var(--text-primary); font-size: 0.95rem;">Machine Learning &amp; NLP</strong>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Scikit-Learn, TF-IDF Vectorizer (15k features), LinearSVC, Logistic Regression, CalibratedClassifierCV</p>
+          </div>
+
+          <div style="border-left: 3px solid var(--real-green); padding-left: 1rem;">
+            <strong style="color: var(--text-primary); font-size: 0.95rem;">Serialization &amp; Storage</strong>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">Joblib model binary serialization, SQLite3 ACID persistent audit database</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Overall Validation Score:</span>
+          <span style="font-size: 1.1rem; font-weight: 800; color: var(--real-green-dark);">99.21%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Academic Scope & Limitations -->
+    <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 2.5rem; box-shadow: var(--shadow-sm); margin-bottom: 3.5rem;">
+      <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-bottom: 1rem;">
+        Academic Limitations &amp; Ethical Considerations
+      </h3>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+        <div>
+          <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--lavender-800); margin-bottom: 0.5rem;">1. Stylistic vs. Factual Grounding</h4>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+            TF-IDF models analyze rhetorical and lexical style rather than querying an external live knowledge graph. Sophisticated disinformation that mimics formal journalistic cadence can sometimes bypass lexical classifiers, which is why multi-source human oversight remains essential.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--lavender-800); margin-bottom: 0.5rem;">2. Temporal Concept Drift</h4>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+            Political figures, geopolitical entities, and terminology evolve over time. Academic models trained on historical corpora require periodic retraining to maintain efficacy on contemporary events and emerging phraseology.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Call to Action -->
+    <div style="text-align: center;">
+      <a href="detect.html" class="btn btn-primary" id="aboutPageCTA">
+        <span>Proceed to Detection Interface</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer" id="siteFooter">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-brand">
+          <div class="brand-logo">
+            <div class="brand-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <span>Echo<span class="brand-accent">Check</span></span>
+          </div>
+          <p class="footer-brand-desc">
+            An academic machine learning platform engineering transparency in news consumption through natural language processing, TF-IDF feature extraction, and calibrated probability modeling.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html" class="footer-link">Home</a></li>
+            <li><a href="detect.html" class="footer-link">Detect News</a></li>
+            <li><a href="how-it-works.html" class="footer-link">How It Works</a></li>
+            <li><a href="about.html" class="footer-link">Project Scope</a></li>
+            <li><a href="history.html" class="footer-link">Prediction History</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">ML Architecture</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">TF-IDF Vectorizer</span></li>
+            <li><span class="footer-link">Linear SVM (Calibrated)</span></li>
+            <li><span class="footer-link">Logistic Regression</span></li>
+            <li><span class="footer-link">Kaggle ISOT Dataset</span></li>
+            <li><span class="footer-link">SQLite3 Persistence</span></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Academic Mini Project</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">Domain: Artificial Intelligence & NLP</span></li>
+            <li><span class="footer-link">Model Accuracy: 99.21%</span></li>
+            <li><span class="footer-link">Calibrated Probabilities: Yes</span></li>
+            <li><span class="footer-link">Academic Year: 2025–2026</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>
+          &copy; 2026 <strong>EchoCheck</strong>. Academic College Mini Project.
+        </div>
+        <div class="footer-academic-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+          <span>Natural Language Processing & ML System</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript -->
+  <script src="static/js/main.js"></script>
+</body>
+</html>

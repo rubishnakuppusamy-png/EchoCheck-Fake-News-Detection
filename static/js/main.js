@@ -1,6 +1,6 @@
 /**
  * EchoCheck - AI-Based Fake News Detection System
- * Frontend Application Logic & Reactive Interactions
+ * Frontend Application Logic, Hybrid Client/Server ML Engine, and Reactive UI
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,6 +22,160 @@ function initMobileNav() {
       const isExpanded = navLinks.classList.contains('active');
       toggleBtn.setAttribute('aria-expanded', isExpanded);
     });
+  }
+}
+
+/* ==========================================================================
+   Client-Side ML Engine (Runs 100% on GitHub Pages without a Python server!)
+   ========================================================================== */
+let cachedWeights = null;
+
+async function loadModelWeights() {
+  if (cachedWeights) return cachedWeights;
+  try {
+    const res = await fetch('static/model/model_weights.json');
+    if (!res.ok) throw new Error('Weights not found');
+    cachedWeights = await res.json();
+    return cachedWeights;
+  } catch (e) {
+    console.warn('Could not load static weights file:', e);
+    return null;
+  }
+}
+
+function cleanTextJS(text) {
+  let cleaned = (text || '').toLowerCase();
+  cleaned = cleaned.replace(/^\s*([a-za-z\s,]+)?\((?:reuters|ap|afp|bloomberg|pti|al jazeera)\)\s*[-–—:]\s*/i, ' ');
+  cleaned = cleaned.replace(/\b(reuters|associated press)\b/gi, ' ');
+  cleaned = cleaned.replace(/https?:\/\/\S+|www\.\S+/gi, ' ');
+  cleaned = cleaned.replace(/<.*?>/g, ' ');
+  cleaned = cleaned.replace(/[^a-zA-Z\s]/g, ' ');
+  return cleaned.replace(/\s+/g, ' ').trim();
+}
+
+function extractLinguisticSignalsJS(rawText) {
+  const words = (rawText || '').trim().split(/\s+/).filter(Boolean);
+  const totalChars = rawText.length;
+  let upper = 0, excl = 0, quest = 0;
+  for (let c of rawText) {
+    if (c >= 'A' && c <= 'Z') upper++;
+    if (c === '!') excl++;
+    if (c === '?') quest++;
+  }
+  const avgLen = words.length > 0 ? (words.reduce((a, b) => a + b.length, 0) / words.length) : 0;
+  const upperRatio = totalChars > 0 ? ((upper / totalChars) * 100) : 0;
+  return {
+    word_count: words.length,
+    char_count: totalChars,
+    uppercase_ratio: parseFloat(upperRatio.toFixed(2)),
+    exclamation_count: excl,
+    question_count: quest,
+    avg_word_length: parseFloat(avgLen.toFixed(2))
+  };
+}
+
+async function predictClientSide(rawText) {
+  const modelData = await loadModelWeights();
+  if (!modelData) {
+    throw new Error('Model weights could not be loaded.');
+  }
+
+  const cleaned = cleanTextJS(rawText);
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  const ngrams = {};
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i];
+    ngrams[w] = (ngrams[w] || 0) + 1;
+    if (i + 1 < words.length) {
+      const bg = w + ' ' + words[i + 1];
+      ngrams[bg] = (ngrams[bg] || 0) + 1;
+    }
+  }
+
+  const weights = modelData.weights;
+  const intercepts = modelData.intercepts;
+  const calibs = modelData.calibrations;
+
+  const vec = {};
+  let normSq = 0;
+  for (let term in ngrams) {
+    if (weights[term]) {
+      const idf = weights[term][0];
+      const count = ngrams[term];
+      const tf = 1.0 + Math.log(count);
+      const tfidf = tf * idf;
+      vec[term] = tfidf;
+      normSq += tfidf * tfidf;
+    }
+  }
+
+  const norm = Math.sqrt(normSq) || 1.0;
+  for (let term in vec) {
+    vec[term] /= norm;
+  }
+
+  const pRealList = [];
+  for (let cIdx = 0; cIdx < 3; cIdx++) {
+    let dot = intercepts[cIdx];
+    for (let term in vec) {
+      dot += vec[term] * weights[term][1 + cIdx];
+    }
+    const a = calibs[cIdx].a;
+    const b = calibs[cIdx].b;
+    const pReal = 1.0 / (1.0 + Math.exp(a * dot + b));
+    pRealList.push(pReal);
+  }
+
+  const realProb = parseFloat(((pRealList.reduce((a, b) => a + b, 0) / 3.0) * 100).toFixed(2));
+  const fakeProb = parseFloat((100.0 - realProb).toFixed(2));
+  const label = realProb >= 50.0 ? 'REAL' : 'FAKE';
+  const confidence = label === 'REAL' ? realProb : fakeProb;
+
+  const signals = extractLinguisticSignalsJS(rawText);
+
+  let explanation = '';
+  if (label === 'REAL') {
+    if (confidence > 85) {
+      explanation = `The article exhibits formal journalistic conventions, objective vocabulary, and balanced syntax characteristic of verified news reporting. Calibrated model confidence is strong (${confidence}%), and linguistic analysis indicates low sensationalism with an uppercase ratio of only ${signals.uppercase_ratio}%.`;
+    } else {
+      explanation = `The model classifies this text as REAL with moderate confidence (${confidence}%). While the article maintains factual structure and measured vocabulary, some phrasing exhibits stylistic overlap with opinion or commentary pieces.`;
+    }
+  } else {
+    if (signals.uppercase_ratio > 4.0 || signals.exclamation_count > 1) {
+      explanation = `The article displays prominent hallmarks of fabricated or deceptive news, including sensationalist phrasing, emotional urgency, and elevated punctuation/capitalization (${signals.exclamation_count} exclamation marks, ${signals.uppercase_ratio}% uppercase). TF-IDF n-grams matched high-frequency lexical patterns found in the disinformation corpus with ${confidence}% calibrated confidence.`;
+    } else {
+      explanation = `The article is predicted to be FAKE with ${confidence}% confidence. The semantic structure, unverifiable claims, and vocabulary distribution match patterns identified in the disinformation training dataset, diverging significantly from verified journalistic source standards.`;
+    }
+  }
+
+  return {
+    success: true,
+    label: label,
+    confidence: confidence,
+    real_prob: realProb,
+    fake_prob: fakeProb,
+    signals: signals,
+    explanation: explanation,
+    timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
+  };
+}
+
+function saveToLocalHistory(item) {
+  try {
+    const list = JSON.parse(localStorage.getItem('echocheck_history') || '[]');
+    list.unshift({
+      id: list.length + 1,
+      article_text: item.text,
+      article_snippet: item.text.replace(/\s+/g, ' ').substring(0, 160) + '...',
+      predicted_label: item.label,
+      confidence_score: item.confidence,
+      real_prob: item.real_prob,
+      fake_prob: item.fake_prob,
+      created_at: item.timestamp || new Date().toISOString().replace('T', ' ').substring(0, 19)
+    });
+    localStorage.setItem('echocheck_history', JSON.stringify(list.slice(0, 100)));
+  } catch (e) {
+    console.warn('LocalStorage save error:', e);
   }
 }
 
@@ -52,7 +206,6 @@ function initNewsDetector() {
     if (charCounter) charCounter.textContent = `${chars.toLocaleString()} characters`;
     if (wordCounter) wordCounter.textContent = `${words.toLocaleString()} words`;
 
-    // Hide validation alert as user types
     if (validationAlert && validationAlert.style.display !== 'none') {
       validationAlert.style.display = 'none';
     }
@@ -86,13 +239,12 @@ function initNewsDetector() {
     });
   });
 
-  // 4. Form Submission & Real-Time Prediction
+  // 4. Form Submission & Hybrid Real-Time Prediction
   if (analyzeBtn) {
     analyzeBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       const rawText = textarea.value.trim();
 
-      // Client-Side Validation
       if (!rawText) {
         showAlert('Please paste or type a news article before analyzing.');
         textarea.focus();
@@ -111,7 +263,6 @@ function initNewsDetector() {
         return;
       }
 
-      // Hide results & alert, show loader
       if (validationAlert) validationAlert.style.display = 'none';
       if (resultsCard) resultsCard.style.display = 'none';
       if (loadingBox) loadingBox.style.display = 'block';
@@ -119,20 +270,22 @@ function initNewsDetector() {
       analyzeBtn.disabled = true;
       analyzeBtn.innerHTML = '<span class="loading-spinner-sm"></span> Analyzing...';
 
-      // Simulated pipeline progression steps for UX
       const pipelineSteps = [
-        'Normalizing text and stripping wire prefixes...',
-        'Extracting TF-IDF n-gram feature vectors...',
+        'Normalizing text and stripping wire datelines...',
+        'Extracting TF-IDF unigram & bigram vectors...',
         'Running calibrated Machine Learning model...',
-        'Synthesizing confidence & linguistic signals...'
+        'Synthesizing confidence & linguistic diagnostics...'
       ];
 
       let stepIdx = 0;
       const interval = setInterval(() => {
         stepIdx = (stepIdx + 1) % pipelineSteps.length;
         if (loadingStatusText) loadingStatusText.textContent = pipelineSteps[stepIdx];
-      }, 350);
+      }, 300);
 
+      let data = null;
+
+      // First attempt: try Python Flask endpoint /predict
       try {
         const response = await fetch('/predict', {
           method: 'POST',
@@ -142,34 +295,50 @@ function initNewsDetector() {
           },
           body: JSON.stringify({ text: rawText })
         });
+        if (response.ok) {
+          data = await response.json();
+        }
+      } catch (err) {
+        // Backend not reachable (e.g. running on static GitHub Pages)
+      }
 
-        clearInterval(interval);
-        const data = await response.json();
-
-        if (loadingBox) loadingBox.style.display = 'none';
-        analyzeBtn.disabled = false;
-        analyzeBtn.innerHTML = `
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-          </svg>
-          Analyze News
-        `;
-
-        if (!response.ok || !data.success) {
-          showAlert(data.error || 'Server error occurred during prediction.');
+      // Fallback: execute client-side ML engine directly in browser
+      if (!data || !data.success) {
+        try {
+          data = await predictClientSide(rawText);
+        } catch (clientErr) {
+          clearInterval(interval);
+          if (loadingBox) loadingBox.style.display = 'none';
+          analyzeBtn.disabled = false;
+          analyzeBtn.innerHTML = 'Analyze News';
+          showAlert('Error analyzing article: ' + clientErr.message);
           return;
         }
-
-        // Render Results Card
-        displayPredictionResult(data, rawText);
-
-      } catch (err) {
-        clearInterval(interval);
-        if (loadingBox) loadingBox.style.display = 'none';
-        analyzeBtn.disabled = false;
-        analyzeBtn.innerHTML = 'Analyze News';
-        showAlert('Network error: Unable to connect to the EchoCheck backend server. Please verify Flask is running.');
       }
+
+      clearInterval(interval);
+      if (loadingBox) loadingBox.style.display = 'none';
+      analyzeBtn.disabled = false;
+      analyzeBtn.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Analyze News
+      `;
+
+      // Save to local storage for GitHub Pages history
+      saveToLocalHistory({
+        text: rawText,
+        label: data.label,
+        confidence: data.confidence,
+        real_prob: data.real_prob,
+        fake_prob: data.fake_prob,
+        timestamp: data.timestamp
+      });
+
+      // Render Results Card
+      displayPredictionResult(data, rawText);
     });
   }
 
@@ -187,7 +356,6 @@ function initNewsDetector() {
 
     const isReal = res.label === 'REAL';
 
-    // 1. Badge & Statement
     const resultBadge = document.getElementById('resultBadge');
     const statementHeading = document.getElementById('resultsStatementHeading');
     const circleBar = document.getElementById('circleProgressBar');
@@ -216,14 +384,12 @@ function initNewsDetector() {
         : 'This article is predicted to be FAKE.';
     }
 
-    // 2. Circular Meter Animation (circumference = 2 * PI * 70 = 439.82 ~ 440)
     const conf = res.confidence;
     const circumference = 440;
     const offset = circumference - (conf / 100) * circumference;
 
     if (circleBar) {
       circleBar.className = `circle-progress-bar ${isReal ? 'stroke-real' : 'stroke-fake'}`;
-      // Trigger smooth transition
       circleBar.style.strokeDashoffset = '440';
       setTimeout(() => {
         circleBar.style.strokeDashoffset = `${offset}`;
@@ -234,13 +400,11 @@ function initNewsDetector() {
       circleVal.textContent = `${conf}%`;
     }
 
-    // 3. Dual Probability Bar
     if (probFillReal) probFillReal.style.width = `${res.real_prob}%`;
     if (probFillFake) probFillFake.style.width = `${res.fake_prob}%`;
     if (probValReal) probValReal.textContent = `${res.real_prob}%`;
     if (probValFake) probValFake.textContent = `${res.fake_prob}%`;
 
-    // 4. Explanation & Signals
     if (explanationText) explanationText.textContent = res.explanation;
 
     if (res.signals) {
@@ -250,16 +414,13 @@ function initNewsDetector() {
       if (signalAvgLen) signalAvgLen.textContent = `${res.signals.avg_word_length || 0} ch`;
     }
 
-    // 5. Analyzed Snippet
     if (analyzedPreview) {
       analyzedPreview.textContent = originalText;
     }
 
-    // Show card and scroll
     resultsCard.style.display = 'block';
     resultsCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // Copy Summary Action
     const copySummaryBtn = document.getElementById('copySummaryBtn');
     if (copySummaryBtn) {
       copySummaryBtn.onclick = () => {
@@ -271,7 +432,6 @@ function initNewsDetector() {
       };
     }
 
-    // Analyze Another Button
     const analyzeAnotherBtn = document.getElementById('analyzeAnotherBtn');
     if (analyzeAnotherBtn) {
       analyzeAnotherBtn.onclick = () => {
@@ -291,7 +451,6 @@ function initNewsDetector() {
 function initHistoryView() {
   const searchInput = document.getElementById('historySearch');
   const filterButtons = document.querySelectorAll('.filter-btn');
-  const historyRows = document.querySelectorAll('.history-row');
   const clearHistoryBtn = document.getElementById('clearHistoryBtn');
   const confirmClearModal = document.getElementById('confirmClearModal');
   const viewArticleModal = document.getElementById('viewArticleModal');
@@ -299,6 +458,12 @@ function initHistoryView() {
   const executeClearBtn = document.getElementById('executeClearBtn');
   const closeArticleModalBtn = document.getElementById('closeArticleModalBtn');
   const fullArticleModalContent = document.getElementById('fullArticleModalContent');
+  const historyTableBody = document.getElementById('historyTableBody');
+
+  // Sync / populate from LocalStorage if on GitHub Pages (static mode)
+  syncLocalStorageHistory();
+
+  const historyRows = document.querySelectorAll('.history-row');
 
   // Search Filter
   if (searchInput) {
@@ -318,8 +483,9 @@ function initHistoryView() {
 
   function applyFilters() {
     const term = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const currentRows = document.querySelectorAll('.history-row');
 
-    historyRows.forEach(row => {
+    currentRows.forEach(row => {
       const text = row.getAttribute('data-text') || '';
       const label = row.getAttribute('data-label') || '';
 
@@ -344,31 +510,19 @@ function initHistoryView() {
 
     if (executeClearBtn) {
       executeClearBtn.addEventListener('click', async () => {
+        // Clear local storage
+        localStorage.removeItem('echocheck_history');
+        // Clear backend if running
         try {
-          const res = await fetch('/api/history', { method: 'DELETE' });
-          const data = await res.json();
-          if (data.success) {
-            window.location.reload();
-          } else {
-            alert('Error clearing history: ' + (data.error || 'Unknown error'));
-          }
-        } catch (e) {
-          alert('Network error while clearing history.');
-        }
+          await fetch('/api/history', { method: 'DELETE' });
+        } catch (e) {}
+        window.location.reload();
       });
     }
   }
 
   // View Full Article Modal Trigger
-  document.querySelectorAll('.btn-view-article').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const fullText = e.currentTarget.getAttribute('data-full-text');
-      if (viewArticleModal && fullArticleModalContent) {
-        fullArticleModalContent.textContent = fullText;
-        viewArticleModal.classList.add('active');
-      }
-    });
-  });
+  bindViewButtons();
 
   if (closeArticleModalBtn && viewArticleModal) {
     closeArticleModalBtn.addEventListener('click', () => {
@@ -376,7 +530,6 @@ function initHistoryView() {
     });
   }
 
-  // Close modals on clicking overlay backdrop
   [confirmClearModal, viewArticleModal].forEach(modal => {
     if (modal) {
       modal.addEventListener('click', (e) => {
@@ -385,8 +538,98 @@ function initHistoryView() {
     }
   });
 
-  // Chart.js Donut Chart Rendering (if canvas exists)
   initHistoryChart();
+}
+
+function bindViewButtons() {
+  const viewArticleModal = document.getElementById('viewArticleModal');
+  const fullArticleModalContent = document.getElementById('fullArticleModalContent');
+
+  document.querySelectorAll('.btn-view-article').forEach(btn => {
+    btn.onclick = (e) => {
+      const fullText = e.currentTarget.getAttribute('data-full-text');
+      if (viewArticleModal && fullArticleModalContent) {
+        fullArticleModalContent.textContent = fullText;
+        viewArticleModal.classList.add('active');
+      }
+    };
+  });
+}
+
+function syncLocalStorageHistory() {
+  const historyTableBody = document.getElementById('historyTableBody');
+  if (!historyTableBody) return;
+
+  const localHistory = JSON.parse(localStorage.getItem('echocheck_history') || '[]');
+  const existingRows = historyTableBody.querySelectorAll('.history-row');
+
+  // If local storage has items and table is either empty or we're on static page
+  if (localHistory.length > 0 && existingRows.length === 0) {
+    let rowsHTML = '';
+    let realCount = 0;
+    let fakeCount = 0;
+    let totalConf = 0;
+
+    localHistory.forEach((item, idx) => {
+      const isReal = item.predicted_label === 'REAL';
+      if (isReal) realCount++; else fakeCount++;
+      totalConf += parseFloat(item.confidence_score || 0);
+
+      rowsHTML += `
+        <tr class="history-row" data-text="${(item.article_text || '').toLowerCase()}" data-label="${item.predicted_label}">
+          <td style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">#${idx + 1}</td>
+          <td style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">${item.created_at}</td>
+          <td>
+            <div class="table-snippet" title="${item.article_text}">
+              ${item.article_snippet}
+            </div>
+          </td>
+          <td>
+            ${isReal
+              ? `<span class="table-badge table-badge-real"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> REAL</span>`
+              : `<span class="table-badge table-badge-fake"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> FAKE</span>`
+            }
+          </td>
+          <td>
+            <strong style="color: ${isReal ? 'var(--real-green-dark)' : 'var(--fake-red-dark)'};">
+              ${item.confidence_score}%
+            </strong>
+          </td>
+          <td style="text-align: right;">
+            <button type="button" class="btn btn-secondary btn-sm btn-view-article" data-full-text="${item.article_text}" title="View Complete Text">
+              <span>View</span>
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    historyTableBody.innerHTML = rowsHTML;
+
+    // Update stats counters
+    const total = localHistory.length;
+    const realPct = total > 0 ? ((realCount / total) * 100).toFixed(1) : 0;
+    const fakePct = total > 0 ? ((fakeCount / total) * 100).toFixed(1) : 0;
+    const avgConf = total > 0 ? (totalConf / total).toFixed(1) : 0;
+
+    const statTotalVal = document.getElementById('statTotalVal');
+    const statRealPctVal = document.getElementById('statRealPctVal');
+    const statFakePctVal = document.getElementById('statFakePctVal');
+    const statAvgConfVal = document.getElementById('statAvgConfVal');
+
+    if (statTotalVal) statTotalVal.textContent = total;
+    if (statRealPctVal) statRealPctVal.textContent = `${realPct}%`;
+    if (statFakePctVal) statFakePctVal.textContent = `${fakePct}%`;
+    if (statAvgConfVal) statAvgConfVal.textContent = `${avgConf}%`;
+
+    const chartCanvas = document.getElementById('historyDistributionChart');
+    if (chartCanvas) {
+      chartCanvas.setAttribute('data-real-count', realCount);
+      chartCanvas.setAttribute('data-fake-count', fakeCount);
+    }
+
+    bindViewButtons();
+  }
 }
 
 function initHistoryChart() {

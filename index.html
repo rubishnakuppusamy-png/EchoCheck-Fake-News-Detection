@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EchoCheck – AI-Based Fake News Detection System</title>
+  <meta name="description" content="EchoCheck is an academic machine learning web platform that analyzes news articles with TF-IDF vectorization and calibrated classifiers to detect fake vs. real news.">
+  
+  <!-- Modern Typography (Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="static/css/style.css">
+
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="index.html" class="brand-logo" id="navLogo">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <span>Echo<span class="brand-accent">Check</span></span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav>
+          <ul class="nav-links" id="navLinks">
+            <li>
+              <a href="index.html" class="nav-link active" id="navHome">Home</a>
+            </li>
+            <li>
+              <a href="detect.html" class="nav-link " id="navDetect">Detect News</a>
+            </li>
+            <li>
+              <a href="how-it-works.html" class="nav-link " id="navHowItWorks">How It Works</a>
+            </li>
+            <li>
+              <a href="about.html" class="nav-link " id="navAbout">About</a>
+            </li>
+            <li>
+              <a href="history.html" class="nav-link " id="navHistory">History</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Right Side CTA and Mobile Menu Toggle -->
+        <div class="nav-actions">
+          <a href="detect.html" class="btn-nav-cta" id="navHeaderCTA">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Analyze News</span>
+          </a>
+
+          <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dynamic Page Content -->
+  <main>
+    
+<!-- Hero Section -->
+<section class="hero-section" id="heroSection">
+  <div class="hero-bg-shapes">
+    <div class="shape-blob-1"></div>
+    <div class="shape-blob-2"></div>
+  </div>
+
+  <div class="container">
+    <div class="hero-grid">
+      <!-- Left Column: Copy & Actions -->
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="hero-badge-pulse"></span>
+          <span>AI-Powered Fact Verification & Disinformation Defense</span>
+        </div>
+
+        <h1 class="hero-title">
+          Know What's Real. <br>
+          <span class="gradient-text">Detect What's Fake.</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          EchoCheck uses state-of-the-art Natural Language Processing and calibrated machine learning models to analyze the lexical syntax, stylistic hallmarks, and authenticity of news articles in seconds.
+        </p>
+
+        <div class="hero-actions">
+          <a href="detect.html" class="btn btn-primary" id="heroAnalyzeBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Analyze News Article</span>
+          </a>
+
+          <a href="how-it-works.html" class="btn btn-secondary" id="heroHowItWorksBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <span>Explore Methodology</span>
+          </a>
+        </div>
+
+        <div class="hero-metrics-pill-group">
+          <div class="hero-metric-item">
+            <span class="hero-metric-number">99.21%</span>
+            <span class="hero-metric-label">Validation Accuracy</span>
+          </div>
+
+          <div class="hero-metric-item">
+            <span class="hero-metric-number">23963</span>
+            <span class="hero-metric-label">Trained Articles</span>
+          </div>
+
+          <div class="hero-metric-item">
+            <span class="hero-metric-number">&lt; 30 ms</span>
+            <span class="hero-metric-label">Inference Latency</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Visual Illustration -->
+      <div class="hero-visual-wrapper">
+        <div class="hero-visual-card">
+          <img 
+            src="static/images/hero-illustration.png" 
+            alt="AI News Verification and Deep NLP Pipeline" 
+            class="hero-visual-img"
+            id="heroIllustrationImg"
+          >
+          <div class="hero-floating-badge">
+            <div class="floating-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="floating-text-title">Calibrated AI Classification</div>
+              <div class="floating-text-sub">TF-IDF &bull; Support Vector Machine</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Summary Section -->
+<section class="section section-alt" id="overviewSection">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Architecture Overview</span>
+      <h2 class="section-title">How EchoCheck Detects Fabricated Content</h2>
+      <p class="section-desc">
+        Our multi-stage natural language processing pipeline extracts linguistic nuances and statistical patterns that differentiate credible journalism from manipulative disinformation.
+      </p>
+    </div>
+
+    <div class="pipeline-steps-wrapper">
+      <div class="pipeline-step-item">
+        <div class="step-number-badge">1</div>
+        <div>
+          <h3 class="step-content-title">Article Ingestion & Cleaning</h3>
+          <p class="step-content-desc">
+            Raw article text is ingested, stripped of wire tags (such as Reuters or AP datelines to prevent bias), normalized to lowercase, and cleansed of HTML fragments and noisy symbols.
+          </p>
+          <span class="step-tag-pill">Regex Filtering &bull; Dateline Stripping</span>
+        </div>
+      </div>
+
+      <div class="pipeline-step-item">
+        <div class="step-number-badge">2</div>
+        <div>
+          <h3 class="step-content-title">TF-IDF N-Gram Vectorization</h3>
+          <p class="step-content-desc">
+            The cleaned text is transformed into a high-dimensional mathematical vector using 15,000 unigram and bigram TF-IDF weights, capturing both individual vocabulary and paired phrase patterns.
+          </p>
+          <span class="step-tag-pill">Sublinear TF &bull; 15,000 N-Gram Vocabulary</span>
+        </div>
+      </div>
+
+      <div class="pipeline-step-item">
+        <div class="step-number-badge">3</div>
+        <div>
+          <h3 class="step-content-title">Calibrated Supervised Classification</h3>
+          <p class="step-content-desc">
+            A trained Support Vector Classifier with Platt probability calibration evaluates the feature vector to generate an uncorrupted, real-world probability confidence percentage for REAL or FAKE.
+          </p>
+          <span class="step-tag-pill">CalibratedClassifierCV &bull; LinearSVC &bull; 99.21% Test F1</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="detect.html" class="btn btn-primary" id="ctaDetectMidBtn">
+        <span>Test Your First Article</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="section" id="featuresSection">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Core Capabilities</span>
+      <h2 class="section-title">Designed for Academic Precision & Speed</h2>
+      <p class="section-desc">
+        Built with enterprise-grade modularity, transparent explanations, and persistent history logging.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">AI-Powered NLP Analysis</h3>
+        <p class="feature-text">
+          Deep lexical evaluation using unigram and bigram term weighting trained on thousands of confirmed factual and fabricated news reports.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 14 14"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Instant Real-Time Predictions</h3>
+        <p class="feature-text">
+          Asynchronous fetch architecture with sub-30 millisecond inference allows readers and fact-checkers to evaluate articles on demand.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Calibrated Confidence Scores</h3>
+        <p class="feature-text">
+          Probabilities are rigorously calibrated through cross-validation rather than hardcoded thresholds, providing trustworthy uncertainty quantification.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Linguistic Signal Detection</h3>
+        <p class="feature-text">
+          Detects manipulative stylistic indicators such as excessive capitalization, sensationalist punctuation, and emotional sentence structures.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Persistent Prediction History</h3>
+        <p class="feature-text">
+          SQLite database records every analyzed story, allowing users to revisit past scans, compare score distributions, and export data.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Academic Transparency</h3>
+        <p class="feature-text">
+          Developed for university demonstration with complete mathematical transparency, open dataset references, and empirical confusion matrices.
+        </p>
+      </div>
+    </div>
+
+    <!-- Project Disclaimer -->
+    <div class="disclaimer-banner" id="projectDisclaimer">
+      <div class="disclaimer-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div>
+        <h4 class="disclaimer-title">Project Disclaimer & Fact-Checking Notice</h4>
+        <p class="disclaimer-text">
+          EchoCheck is an educational and academic machine learning research project. Predictions reflect statistical patterns extracted from historical training corpora and should be treated as automated probability estimates, <strong>not as an absolute substitute for professional investigative journalism, manual source verification, or established independent fact-checking bodies</strong>. Always cross-examine critical claims across multiple primary sources.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer" id="siteFooter">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col-brand">
+          <div class="brand-logo">
+            <div class="brand-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <span>Echo<span class="brand-accent">Check</span></span>
+          </div>
+          <p class="footer-brand-desc">
+            An academic machine learning platform engineering transparency in news consumption through natural language processing, TF-IDF feature extraction, and calibrated probability modeling.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html" class="footer-link">Home</a></li>
+            <li><a href="detect.html" class="footer-link">Detect News</a></li>
+            <li><a href="how-it-works.html" class="footer-link">How It Works</a></li>
+            <li><a href="about.html" class="footer-link">Project Scope</a></li>
+            <li><a href="history.html" class="footer-link">Prediction History</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">ML Architecture</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">TF-IDF Vectorizer</span></li>
+            <li><span class="footer-link">Linear SVM (Calibrated)</span></li>
+            <li><span class="footer-link">Logistic Regression</span></li>
+            <li><span class="footer-link">Kaggle ISOT Dataset</span></li>
+            <li><span class="footer-link">SQLite3 Persistence</span></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col-title">Academic Mini Project</h4>
+          <ul class="footer-links-list">
+            <li><span class="footer-link">Domain: Artificial Intelligence & NLP</span></li>
+            <li><span class="footer-link">Model Accuracy: 99.21%</span></li>
+            <li><span class="footer-link">Calibrated Probabilities: Yes</span></li>
+            <li><span class="footer-link">Academic Year: 2025–2026</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>
+          &copy; 2026 <strong>EchoCheck</strong>. Academic College Mini Project.
+        </div>
+        <div class="footer-academic-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+          <span>Natural Language Processing & ML System</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript -->
+  <script src="static/js/main.js"></script>
+</body>
+</html>
