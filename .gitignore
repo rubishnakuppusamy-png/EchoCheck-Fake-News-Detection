@@ -1,0 +1,15 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.env
+
+# Large raw dataset CSVs (not needed for inference; model is already trained & saved in model/)
+dataset/
+
+# SQLite lock files if any
+*.db-journal

@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block title %}Prediction History – EchoCheck AI{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    
+    <!-- Page Header -->
+    <div class="section-header" style="margin-bottom: 2.25rem;">
+      <span class="section-badge">Persistent SQLite Audit Log</span>
+      <h1 class="section-title">Prediction History</h1>
+      <p class="section-desc">
+        Complete historical log of all analyzed articles, classifications, and calibrated probability scores stored locally in SQLite.
+      </p>
+    </div>
+
+    <!-- History Stats KPI Cards -->
+    <div class="history-stats-grid">
+      <div class="history-stat-card">
+        <div class="history-stat-info">
+          <span class="history-stat-val" id="statTotalVal">{{ stats.total }}</span>
+          <span class="history-stat-label">Total Analyzed</span>
+        </div>
+        <div class="history-stat-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="history-stat-card">
+        <div class="history-stat-info">
+          <span class="history-stat-val" style="color: var(--real-green-dark);" id="statRealPctVal">{{ stats.real_pct }}%</span>
+          <span class="history-stat-label">Real News ({{ stats.real_count }})</span>
+        </div>
+        <div class="history-stat-icon" style="background: var(--real-green-bg); color: var(--real-green-dark);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="history-stat-card">
+        <div class="history-stat-info">
+          <span class="history-stat-val" style="color: var(--fake-red-dark);" id="statFakePctVal">{{ stats.fake_pct }}%</span>
+          <span class="history-stat-label">Fake News ({{ stats.fake_count }})</span>
+        </div>
+        <div class="history-stat-icon" style="background: var(--fake-red-bg); color: var(--fake-red-dark);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="history-stat-card">
+        <div class="history-stat-info">
+          <span class="history-stat-val" style="color: var(--lavender-700);" id="statAvgConfVal">{{ stats.avg_confidence }}%</span>
+          <span class="history-stat-label">Avg. Confidence</span>
+        </div>
+        <div class="history-stat-icon" style="background: var(--lavender-100); color: var(--lavender-600);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Breakdown Section (if records exist) -->
+    {% if stats.total > 0 %}
+    <div style="background: #ffffff; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+      <div>
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">Corpus Veracity Distribution</h3>
+        <p style="font-size: 0.88rem; color: var(--text-secondary);">Relative proportion of Real vs. Fabricated stories analyzed in this session.</p>
+      </div>
+      <div style="width: 220px; height: 110px;">
+        <canvas 
+          id="historyDistributionChart" 
+          data-real-count="{{ stats.real_count }}" 
+          data-fake-count="{{ stats.fake_count }}"
+        ></canvas>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- History Toolbar (Search, Filter, Clear) -->
+    <div class="history-toolbar">
+      <input 
+        type="text" 
+        id="historySearch" 
+        class="history-search-input" 
+        placeholder="Search history by keyword or label (e.g., climate, government, REAL)..." 
+        aria-label="Search History"
+      >
+
+      <div class="history-filters">
+        <button type="button" class="filter-btn active" data-filter="ALL" id="filterAllBtn">All ({{ stats.total }})</button>
+        <button type="button" class="filter-btn" data-filter="REAL" id="filterRealBtn">Real Only</button>
+        <button type="button" class="filter-btn" data-filter="FAKE" id="filterFakeBtn">Fake Only</button>
+      </div>
+
+      <div>
+        {% if stats.total > 0 %}
+        <button type="button" class="btn btn-danger btn-sm" id="clearHistoryBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          <span>Clear History</span>
+        </button>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- History Table -->
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="data-table" id="historyDataTable">
+          <thead>
+            <tr>
+              <th style="width: 70px;">ID</th>
+              <th style="width: 170px;">Date &amp; Time</th>
+              <th>Article Snippet</th>
+              <th style="width: 130px;">Prediction</th>
+              <th style="width: 130px;">Confidence</th>
+              <th style="width: 100px; text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            {% if predictions and predictions|length > 0 %}
+              {% for item in predictions %}
+                <tr class="history-row" data-text="{{ item.article_text | lower }}" data-label="{{ item.predicted_label }}">
+                  <td style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">#{{ item.id }}</td>
+                  <td style="font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap;">
+                    {{ item.created_at }}
+                  </td>
+                  <td>
+                    <div class="table-snippet" title="{{ item.article_text }}">
+                      {{ item.article_snippet }}
+                    </div>
+                  </td>
+                  <td>
+                    {% if item.predicted_label == 'REAL' %}
+                      <span class="table-badge table-badge-real">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        REAL
+                      </span>
+                    {% else %}
+                      <span class="table-badge table-badge-fake">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        FAKE
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <strong style="color: {% if item.predicted_label == 'REAL' %}var(--real-green-dark){% else %}var(--fake-red-dark){% endif %};">
+                      {{ item.confidence_score }}%
+                    </strong>
+                  </td>
+                  <td style="text-align: right;">
+                    <button 
+                      type="button" 
+                      class="btn btn-secondary btn-sm btn-view-article"
+                      data-full-text="{{ item.article_text }}"
+                      title="View Complete Text"
+                    >
+                      <span>View</span>
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="6">
+                  <div class="table-empty-state">
+                    <div class="empty-state-icon">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                      </svg>
+                    </div>
+                    <h4 style="font-size: 1.15rem; color: var(--text-primary); margin-bottom: 0.35rem;">No Predictions Recorded Yet</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                      Analyze your first news article to start populating this SQLite audit log.
+                    </p>
+                    <a href="{{ url_for('detect_page') }}" class="btn btn-primary btn-sm">
+                      Go to Detector
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Clear History Confirmation Modal -->
+<div class="modal-overlay" id="confirmClearModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title" style="color: var(--fake-red-dark);">Confirm Clearing History</h3>
+      <button type="button" class="modal-close-btn" id="cancelClearBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to permanently clear the prediction history from the SQLite database? This action cannot be undone.
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('confirmClearModal').classList.remove('active');">
+        Cancel
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" id="executeClearBtn">
+        Yes, Delete All History
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- View Full Article Modal -->
+<div class="modal-overlay" id="viewArticleModal">
+  <div class="modal-box" style="max-width: 720px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Full News Article Content</h3>
+      <button type="button" class="modal-close-btn" id="closeArticleModalBtn">&times;</button>
+    </div>
+    <div class="modal-body" id="fullArticleModalContent" style="white-space: pre-wrap; font-family: inherit; font-size: 0.92rem; line-height: 1.65; max-height: 440px;">
+      Loading text...
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('viewArticleModal').classList.remove('active');">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
